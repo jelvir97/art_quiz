@@ -1,5 +1,8 @@
 import json
 import requests
+import random
+
+
 
 # Class to make API calls to Art Institute of Chicago
 class AIC_Client :
@@ -8,7 +11,50 @@ class AIC_Client :
     #         place_of_origin, artist_id for a random art piece.
     @staticmethod
     def get_artwork_details():
-        response = requests.get('https://api.artic.edu/api/v1/artworks?limit=1&fields=id,title,image_id,artist_title,description,place_of_origin,artist_display,date_display,artist_id')
+        response = requests.post('https://api.artic.edu/api/v1/artworks/search', json={
+                                                                    "resources": "artworks",
+                                                                    "fields": [
+                                                                        "id",
+                                                                        "title",
+                                                                        "artist_title",
+                                                                        "image_id",
+                                                                        "date_display",
+                                                                        "description",
+                                                                        "place_of_origin",
+                                                                    ],
+                                                                    "boost": False,
+                                                                    "limit": 1,
+                                                                    "query": {
+                                                                        "function_score": {
+                                                                        "query": {
+                                                                            "bool": {
+                                                                            "filter": [
+                                                                                {
+                                                                                "exists": {
+                                                                                    "field": "image_id"
+                                                                                }
+                                                                                },
+                                                                                {
+                                                                                "exists": {
+                                                                                    "field": "thumbnail.width"
+                                                                                }
+                                                                                },
+                                                                                {
+                                                                                "exists": {
+                                                                                    "field": "thumbnail.height"
+                                                                                }
+                                                                                }
+                                                                            ]
+                                                                            }
+                                                                        },
+                                                                        "boost_mode": "replace",
+                                                                        "random_score": {
+                                                                            "field": "id",
+                                                                            "seed": [random.randint(1,999999)]
+                                                                        }
+                                                                        }
+                                                                    }
+                                                                    })
         return response.json()['data'][0]
     
     # Takes query argument
