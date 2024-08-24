@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-mfuravdd!49-8n=nja)jngs8k3&!(z#kas0$80(2(x(^em9uxc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["art-quiz-1qvw.onrender.com"]
 
 
 # Application definition
